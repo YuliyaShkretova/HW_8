@@ -92,16 +92,3 @@ class Cart:
             else:
                 product.buy(quantity)
         self.clear()
-
-#
-# eggs = Product("eggs", 10, "some eggs", 200)
-# milk = Product("milk", 20, "some milk", 100)
-#
-# products = {}
-# products.update({eggs: 1})
-# products.update({milk: 2})
-#
-# cart = Cart()
-# cart.products = products
-#
-# print(cart.buy())

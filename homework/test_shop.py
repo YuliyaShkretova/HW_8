@@ -90,4 +90,3 @@ class TestCart:
         cart.add_product(product=product, buy_count=10)
         cart.buy()
         assert len(cart.products) == 0
-
