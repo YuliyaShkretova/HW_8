@@ -16,6 +16,11 @@ def cart():
     return Cart()
 
 
+@pytest.fixture
+def product_2():
+    return Product("book_2", 200, "This is a 2nd book", 2000)
+
+
 class TestProducts:
     """
     Тестовый класс - это способ группировки ваших тестов по какой-то тематике
@@ -56,14 +61,48 @@ class TestCart:
     """
 
     def test_add_product(self, product, cart):
-        # TODO Проверка наличия товара в корзине
+        # TODO Проверка добавления товара в пустую корзину
         cart.add_product(product=product, buy_count=2)
-        assert cart.products[product]
+        actual_price = cart.get_total_price()
+        expected_price = product.price * cart.products[product]
+        assert actual_price == expected_price
+
+    def test_add_product_add_to_ex(self, product, cart):
+        # TODO Проверка добавления товара к существующему в коризне
+        cart.add_product(product=product, buy_count=5)
+        cart.add_product(product=product, buy_count=2)
+        actual_price = cart.get_total_price()
+        expected_price = product.price * cart.products[product]
+        assert actual_price == expected_price
 
     def test_remove_product(self, product, cart):
         # TODO Проверка количества товара в корзине после удаления
         cart.add_product(product=product, buy_count=150)
         cart.remove_product(product=product, remove_count=50)
+        assert cart.products[product]
+
+    def test_remove_product_empty_qty(self, product, cart):
+        # TODO Проверка пустой корзины после удаления товара без указания количества
+        cart.add_product(product=product, buy_count=150)
+        cart.remove_product(product=product, remove_count=None)
+        assert len(cart.products) == 0
+
+    def test_remove_product_none(self, product_2, product, cart):
+        # TODO Проверка ошибки в случае попытки удаления товара, которого в корзине нет
+        with pytest.raises(KeyError, match='Товар не найден в корзине'):
+            cart.remove_product(product=product_2)
+
+    def test_remove_product_more(self, product, cart):
+        # TODO Проверка пустой корзины, если удаляется количество больше, чем в корзине
+        cart.add_product(product=product, buy_count=150)
+        cart.remove_product(product=product, remove_count=200)
+        assert len(cart.products) == 0
+
+    def test_remove_product_2nd_item_left(self, product, cart, product_2):
+        # TODO Проверка количества товара в корзине после удаления
+        cart.add_product(product=product, buy_count=150)
+        cart.add_product(product=product_2, buy_count=150)
+        cart.remove_product(product=product, remove_count=100)
         assert cart.products[product]
 
     def test_clear(self, product, cart):
@@ -72,10 +111,25 @@ class TestCart:
         cart.clear()
         assert len(cart.products) == 0
 
+    def test_clear_two_items(self, product, cart, product_2):
+        # TODO Проверка корзины на отстутствие товара
+        cart.add_product(product=product_2, buy_count=150)
+        cart.add_product(product=product, buy_count=150)
+        cart.clear()
+        assert len(cart.products) == 0
+
     def test_get_total_price(self, product, cart):
         # TODO Сравнение ожидаемой и фактической стоимости
         cart.add_product(product=product)
         expected_price = product.price
+        actual_price = cart.get_total_price()
+        assert actual_price == expected_price
+
+    def test_get_total_price_two_items(self, product, product_2, cart):
+        # TODO Сравнение ожидаемой и фактической стоимости
+        cart.add_product(product=product)
+        cart.add_product(product=product_2)
+        expected_price = product.price + product_2.price
         actual_price = cart.get_total_price()
         assert actual_price == expected_price
 
