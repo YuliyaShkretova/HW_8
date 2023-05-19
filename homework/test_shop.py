@@ -79,7 +79,7 @@ class TestCart:
         # TODO Проверка количества товара в корзине после удаления
         cart.add_product(product=product, buy_count=150)
         cart.remove_product(product=product, remove_count=50)
-        assert cart.products[product]
+        assert cart.products == {product: 100}
 
     def test_remove_product_empty_qty(self, product, cart):
         # TODO Проверка пустой корзины после удаления товара без указания количества
@@ -103,7 +103,7 @@ class TestCart:
         cart.add_product(product=product, buy_count=150)
         cart.add_product(product=product_2, buy_count=150)
         cart.remove_product(product=product, remove_count=100)
-        assert cart.products[product]
+        assert cart.products == {product: 50, product_2: 150}
 
     def test_clear(self, product, cart):
         # TODO Проверка корзины на отстутствие товара
